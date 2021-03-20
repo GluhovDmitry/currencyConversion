@@ -16,10 +16,22 @@ async def convert(request):
         return web.Response(text=json.dumps(response_obj), status=500)
 
 
+async def database(request):
+    try:
+        response_obj = {'status': 'success'}
+        merge = request.query['merge']
+        if merge == 0:
+            pass
+        elif merge == 1:
+            pass
 
+        return web.Response(text=json.dumps(response_obj), status=200)
+    except Exception as e:
+        response_obj = {'status': 'failed', 'reason': str(e)}
+        return web.Response(text=json.dumps(response_obj), status=500)
 app = web.Application()
 #app.router.add_get('/', handle)
-routes = [web.get('/convert', convert)]
+routes = [web.get('/database', database), web.get('/convert', convert)]
 app.add_routes(routes)
 
 host = '127.0.0.1'
