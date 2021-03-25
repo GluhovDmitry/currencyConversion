@@ -1,9 +1,19 @@
+#curl -i -X GET http://localhost:5000/convert?from=RUR&to=USD&amount=40
+#curl -i -X POST -H 'Content-Type: application/json' -d '{'EUR':89, 'USD':76}' http://localhost:5000/database/merge=1
+
+
 from aiohttp import web
-import json
 import redis
+import json
 
 
 class SimilarCurrencyException(Exception):
+    pass
+
+class EmptyDataException(Exception):
+    pass
+
+class InvalidMergeValueException(Exception):
     pass
 
 
@@ -11,7 +21,6 @@ host = '127.0.0.1'
 port = 5000
 
 r = redis.Redis(host='localhost', port=6379, db=0)
-
 
 
 def get_from_db(cur_from, cur_to, amount):
@@ -26,7 +35,6 @@ def get_from_db(cur_from, cur_to, amount):
     elif cur_from == 'RUR':
         result = float(amount)/float(r.get(cur_to))
     return result
-
 
 
 
@@ -45,34 +53,41 @@ async def convert(request):
 
 async def database(request):
     try:
-        is_merge = request.query['merge']
-        #cur = request.json['cur']
-        #rur = request.json['rur']
-        #if is_merge == 0:
-            #r.flushall()
-            #r.set(cur, rur)
-        #elif is_merge == 1:
-            #r.set(cur, rur)
-        print(is_merge)
+        is_merge = int(request.query['merge'])
+        data = await request.post()
+        curs = []
+        values = []
+        for key, value in data.items():
+            if key == 'cur':
+                curs.append(value)
+            if key == 'value':
+                values.append(value)
+        if len(curs) != len(values):
+            raise EmptyDataException
+        if is_merge not in [0, 1]:
+            raise InvalidMergeValueException
+        if is_merge == 0:
+            r.flushall()
+        for i in range(len(curs)):
+            r.set(curs[i], values[i])
         response_obj = {'status': 'success'}
+        for key in r.keys():
+            print(key, r.get(key))
+        print()
         return web.json_response(response_obj, status=200)
     except Exception as e:
        response_obj = {'status': 'failed', 'reason': str(e)}
        return web.json_response(response_obj, status=500)
 
 
-#curl -i -X GET http://localhost:5000/convert?from=RUR&to=USD&amount=40
-#curl -i -X POST -H 'Content-Type: application/json' -d '{'EUR':89, 'USD':76}' http://localhost:5000/database/merge=1
-
 routes = [web.post('/database', database), web.get('/convert', convert)]
 
 app = web.Application()
 app.add_routes(routes)
-#app.router.add_get('/convert', convert)
-#app.router.add_post('/database', database)
 
 
 if __name__ == '__main__':
     web.run_app(app, host=host, port=port)
+
 
 
