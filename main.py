@@ -25,7 +25,7 @@ port = 5000
 r = redis.Redis(host='localhost', port=6379, db=0)
 
 
-def get_conversion(cur_from, cur_to, amount):
+async def get_conversion(cur_from, cur_to, amount):
     result = 0.0
     if cur_to != 'RUR' and cur_from != 'RUR':
         rub_from = r.get(cur_from)
@@ -45,7 +45,7 @@ async def convert_handler(request):
         cur_from = request.query['from']
         cur_to = request.query['to']
         amount = request.query['amount']
-        result = get_conversion(cur_from, cur_to, amount)
+        result = await get_conversion(cur_from, cur_to, amount)
         response_obj = {'status': 'success', 'result': str(round(result, 2))}
         return web.json_response(response_obj, status=200)
     except Exception as e:
