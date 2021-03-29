@@ -41,7 +41,6 @@ async def database_update_handler(request):
             r.set(curs[i], values[i])
 
         response_obj = {'code': 201, 'status': 'success'}
-
         return web.json_response(response_obj, status=201)
 
     except (UnsupportedValueException, TypesMismatchException, EmptyDataException) as e:
