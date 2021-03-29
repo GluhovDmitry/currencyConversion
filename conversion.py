@@ -20,25 +20,28 @@ async def get_conversion(cur_from, cur_to, amount):
     return result
 
 
+async def conversion_checks(cur_to, cur_from, amount):
+    if cur_to == cur_from:
+        raise SimilarCurrencyException(f"Similar currencies! {cur_to} and {cur_from}")
+    elif not cur_to.isalpha():
+        raise UnsupportedType(f"Currency must be a word. Got '{cur_to}'")
+    elif not cur_from.isalpha():
+        raise UnsupportedType(f"Currency must be a word. Got '{cur_from}'")
+    elif cur_to != 'RUR' and r.get(cur_to) is None:
+        raise NoValueException(f"No currency like '{cur_to}'")
+    elif cur_from != 'RUR' and r.get(cur_from) is None:
+        raise NoValueException(f"No currency like '{cur_from}'")
+    if not amount.isdigit():
+        raise UnsupportedValueException(f"Amount must be a digit. Got '{amount}'")
+
+
 async def convert_handler(request):
     try:
         cur_from = request.query['from']
         cur_to = request.query['to']
         amount = request.query['amount']
 
-        if cur_to == cur_from:
-            raise SimilarCurrencyException(f"Similar currencies! {cur_to} and {cur_from}")
-        elif not cur_to.isalpha():
-            raise UnsupportedType(f"Currency must be a word. Got '{cur_to}'")
-        elif not cur_from.isalpha():
-            raise UnsupportedType(f"Currency must be a word. Got '{cur_from}'")
-        elif cur_to != 'RUR' and r.get(cur_to) is None:
-            raise NoValueException(f"No currency like '{cur_to}'")
-        elif cur_from != 'RUR' and r.get(cur_from) is None:
-            raise NoValueException(f"No currency like '{cur_from}'")
-
-        if not amount.isdigit():
-            raise UnsupportedValueException(f"Amount must be a digit. Got '{amount}'")
+        await conversion_checks(cur_to, cur_from, amount)
 
         result = await get_conversion(cur_from, cur_to, amount)
         response_obj = {'code': 200, 'status': 'success', 'result': str(round(result, 2))}

@@ -7,13 +7,24 @@ from conversion import *
 r = redis.Redis(host='localhost', port=6379, db=0)
 
 
+async def update_checks(data, curs, values, is_merge):
+    if type(data['cur']) != type(data['value']):
+        raise TypesMismatchException(f"Got currencies and their values of different types")
+    if len(curs) != len(values):
+        raise EmptyDataException(f"Got currencies {len(curs)} and their values {len(values)}")
+    if is_merge not in [0, 1]:
+        raise UnsupportedValueException(f"Merge value must be 0 or 1. Got '{is_merge}'")
+    for i in range(len(curs)):
+        if not curs[i].isalpha():
+            raise UnsupportedType(f"Currency must be a word. Got '{curs[i]}'")
+        if not values[i].isdigit():
+            raise UnsupportedType(f"Currency value must be a digit. Got '{values[i]}'")
+
+
 async def database_update_handler(request):
     try:
         is_merge = int(request.query['merge'])
         data = await request.json()
-
-        if type(data['cur']) != type(data['value']):
-            raise TypesMismatchException(f"Got currencies and their values of different types")
 
         if type(data['cur']) == list:
             curs = data['cur']
@@ -22,15 +33,7 @@ async def database_update_handler(request):
             curs = [data['cur']]
             values = [data['value']]
 
-        if len(curs) != len(values):
-            raise EmptyDataException(f"Got currencies {len(curs)} and their values {len(values)}")
-        if is_merge not in [0, 1]:
-            raise UnsupportedValueException(f"Merge value must be 0 or 1. Got '{is_merge}'")
-        for i in range(len(curs)):
-            if not curs[i].isalpha():
-                raise UnsupportedType(f"Currency must be a word. Got '{curs[i]}'")
-            if not values[i].isdigit():
-                raise UnsupportedType(f"Currency value must be a digit. Got '{values[i]}'")
+        await update_checks(data, curs, values, is_merge)
 
         if is_merge == 0:
             r.flushall()
@@ -39,8 +42,8 @@ async def database_update_handler(request):
 
         response_obj = {'code': 201, 'status': 'success'}
 
-
         return web.json_response(response_obj, status=201)
+
     except (UnsupportedValueException, TypesMismatchException, EmptyDataException) as e:
         response_obj = {'code': 422, 'status': 'failed', 'reason': str(e)}
         return web.json_response(response_obj, status=422)
