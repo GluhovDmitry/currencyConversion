@@ -11,7 +11,7 @@ async def init():
 
 
 if __name__ == '__main__':
-    host = '127.0.0.1'
+    host = '0.0.0.0'
     port = 5000
     application = init()
     web.run_app(application, host=host, port=port)
