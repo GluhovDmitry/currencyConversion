@@ -6,25 +6,18 @@ class EmptyDataException(Exception):
     pass
 
 
-class InvalidMergeException(Exception):
+class UnsupportedValueException(Exception):
+    pass
+
+
+class TypesMismatchException(Exception):
     pass
 
 
 class NoValueException(Exception):
     pass
 
-class InvalidAmountException(Exception):
-    pass
 
-
-class InvalidCurrencyException(Exception):
-    pass
-
-
-class InvalidCurrencyValueException(Exception):
-    pass
-
-
-class TypesMismatchException(Exception):
+class UnsupportedType(Exception):
     pass
 

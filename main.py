@@ -4,7 +4,7 @@ from db_update import *
 
 
 async def init():
-    routes = [web.post('/database', database_update_handler), web.get('/convert', convert_handler)]
+    routes = [web.post('/database', database_update_handler), web.get('/conversion', convert_handler)]
     app = web.Application()
     app.add_routes(routes)
     return app
