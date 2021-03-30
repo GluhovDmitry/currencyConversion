@@ -1,4 +1,4 @@
-# currencyConversion
+# currency conversion
 Python REST API for currency conversion based on aiohttp
 
 Requires aiohttp 3.7.4, redis 3.5.3, python 3.8
