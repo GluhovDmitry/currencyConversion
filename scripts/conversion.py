@@ -54,7 +54,7 @@ async def convert_handler(request):
     :param cur_to: resulting currency
     :param cur_from: base currency
     :param amount: amount of money
-    :return: result in json or exception in json and error code
+    :return: rounded result in json or exception in json and error code
     '''
     try:
         cur_from = request.query['from']
@@ -64,7 +64,7 @@ async def convert_handler(request):
         await conversion_checks(cur_to, cur_from, amount)
 
         result = await get_conversion(cur_from, cur_to, amount)
-        response_obj = {'code': 200, 'status': 'success', 'result': str(round(result, 2))}
+        response_obj = {'code': 200, 'status': 'success', 'result': str(round(result, 0))}
 
         return web.json_response(response_obj, status=200)
     except NoValueException as e:
