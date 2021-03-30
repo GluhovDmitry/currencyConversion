@@ -1,3 +1,9 @@
+'''
+
+This is REST API for currency conversion. File conversion is "get" handler, db_update - "post".
+
+'''
+
 from aiohttp import web
 from conversion import *
 from db_update import *

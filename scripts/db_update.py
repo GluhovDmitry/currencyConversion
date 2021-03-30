@@ -1,3 +1,10 @@
+'''
+
+This code takes currency data with post in json format. Merge == 1  combines old and new data,
+merge == 0 deletes old data and writes new in redis database.
+
+'''
+
 from aiohttp import web
 import redis
 import json
@@ -9,6 +16,7 @@ r = redis.Redis(host='redis', port=6379, db=0)
 
 
 async def update_checks(data, curs, values, is_merge):
+
     if type(data['cur']) != type(data['value']):
         raise TypesMismatchException(f"Got currencies and their values of different types")
     if len(curs) != len(values):
@@ -23,6 +31,13 @@ async def update_checks(data, curs, values, is_merge):
 
 
 async def database_update_handler(request):
+    '''
+    :param request: post request
+    :param curs: currency name
+    :param values: currency price in rubles
+    :param is_merge: merge data or not (0, 1)
+    :return: success response in json and code 201 or error response in json
+    '''
     try:
         is_merge = int(request.query['merge'])
         data = await request.json()

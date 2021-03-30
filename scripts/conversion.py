@@ -1,3 +1,10 @@
+'''
+
+This code include convert_handler that takes request, conversion_checks that raises exceptions and get_conversion
+that counts the result.
+
+'''
+
 from aiohttp import web
 import redis
 import json
@@ -8,6 +15,9 @@ r = redis.Redis(host='redis', port=6379, db=0)
 
 
 async def get_conversion(cur_from, cur_to, amount):
+    '''
+    This code counts the result
+    '''
     result = 0.0
     if cur_to != 'RUR' and cur_from != 'RUR':
         rub_from = r.get(cur_from)
@@ -21,6 +31,9 @@ async def get_conversion(cur_from, cur_to, amount):
 
 
 async def conversion_checks(cur_to, cur_from, amount):
+    '''
+    Easy-to-read exceptions
+    '''
     if cur_to == cur_from:
         raise SimilarCurrencyException(f"Similar currencies! {cur_to} and {cur_from}")
     elif not cur_to.isalpha():
@@ -36,6 +49,13 @@ async def conversion_checks(cur_to, cur_from, amount):
 
 
 async def convert_handler(request):
+    '''
+    :param request: get request
+    :param cur_to: resulting currency
+    :param cur_from: base currency
+    :param amount: amount of money
+    :return: result in json or exception in json and error code
+    '''
     try:
         cur_from = request.query['from']
         cur_to = request.query['to']
