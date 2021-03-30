@@ -16,7 +16,7 @@ GET http://localhost:5000/conversion?from=BUL&to=RTY&amount=10
 
 POST http://localhost:5000/database?merge=1 to merge data 
 or merge = 0 to delete old data 
-+ json.
+plus json.
 Json data example:
 {
   "cur": ["EUR", "USD", "KJH", "YUT"], 
