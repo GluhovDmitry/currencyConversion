@@ -29,3 +29,6 @@ or single:
 }
 cur is currency
 value - currency price in rubles.
+
+Testing runs:
+pytest tests
