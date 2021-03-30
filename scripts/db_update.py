@@ -1,7 +1,7 @@
 '''
 
 This code takes currency data with post in json format. Merge == 1  combines old and new data,
-merge == 0 deletes old data and writes new in redis database.
+merge == 0 deletes old data and writes new in redis dataase.
 
 '''
 

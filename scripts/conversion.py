@@ -1,6 +1,6 @@
 '''
 
-This code include convert_handler that takes request, conversion_checks that raises exceptions and get_conversion
+This code include convert_handler that takes request, conversio_checks that raises exceptions and get_conversion
 that counts the result.
 
 '''
