@@ -10,8 +10,8 @@ import redis
 import json
 from exceptions import *
 
-#r = redis.Redis(host='0.0.0.0', port=6379, db=0)
-r = redis.Redis(host='redis', port=6379, db=0)
+r = redis.Redis(host='0.0.0.0', port=6379, db=0)
+#r = redis.Redis(host='redis', port=6379, db=0)
 
 
 async def get_conversion(cur_from, cur_to, amount):
@@ -20,9 +20,7 @@ async def get_conversion(cur_from, cur_to, amount):
     '''
     result = 0.0
     if cur_to != 'RUR' and cur_from != 'RUR':
-        rub_from = r.get(cur_from)
-        rub_to = r.get(cur_to)
-        result = float(rub_from) * float(amount) / float(rub_to)
+        result = float(r.get(cur_from)) * float(amount) / float(r.get(cur_to))
     elif cur_to == 'RUR':
         result = float(r.get(cur_from)) * float(amount)
     elif cur_from == 'RUR':
@@ -64,7 +62,7 @@ async def convert_handler(request):
         await conversion_checks(cur_to, cur_from, amount)
 
         result = await get_conversion(cur_from, cur_to, amount)
-        response_obj = {'code': 200, 'status': 'success', 'result': str(round(result, 0))}
+        response_obj = {'code': 200, 'status': 'success', 'result': str(round(result, 2))}
 
         return web.json_response(response_obj, status=200)
     except NoValueException as e:
