@@ -1,10 +1,11 @@
-import pytest
 import requests
 import redis
-from scripts.redis_client import *
+
+
 
 #r = redis.Redis(host='0.0.0.0', port=6379, db=0)
-#r = redis.Redis(host='redis', port=6379, db=0)
+r = redis.Redis(host='0.0.0.0', port=6380, db=0)
+
 r.flushall()
 
 

@@ -6,8 +6,6 @@ that counts the result.
 '''
 
 from aiohttp import web
-import redis
-import json
 from exceptions import *
 from redis_client import *
 

@@ -1,17 +1,18 @@
-import pytest
 import requests
 import redis
-from scripts.redis_client import *
 
 def set_up():
     #r = redis.Redis(host='0.0.0.0', port=6379, db=0)
-    #r = redis.Redis(host='redis', port=6379, db=0)
+    r = redis.Redis(host='0.0.0.0', port=6380, db=0)
+
     r.flushall()
     r.set('USD', '87')
     r.set('EUR', '96')
     r.set('TRE', '23')
     r.set('YRE', '54')
     r.set('WER', '12')
+
+
 
 class TestGetSuccess:
     def test_conversion(self):
