@@ -9,9 +9,11 @@ from aiohttp import web
 import redis
 import json
 from exceptions import *
+from redis_client import *
+
 
 #r = redis.Redis(host='0.0.0.0', port=6379, db=0)
-r = redis.Redis(host='redis', port=6379, db=0)
+#r = redis.Redis(host='redis', port=6379, db=0)
 
 
 async def get_conversion(cur_from, cur_to, amount):
